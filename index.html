@@ -24,6 +24,14 @@
     <button id="submitLink">Add Link</button>
     <p id="formMessage"></p>
   </div>
+
+  <!-- Hidden form for Apps Script POST -->
+  <iframe name="hiddenFrame" style="display:none;"></iframe>
+  <form id="hiddenForm" action="https://script.google.com/macros/s/AKfycbypGNjElBRpIoWiTyMuuv4shp8FV3hH0pTNx9eoyMepMj36D6Qk7Oo3plEMgCINW_0q/exec" method="POST" target="hiddenFrame" style="display:none;">
+    <input type="hidden" name="Name" id="formName">
+    <input type="hidden" name="URL" id="formURL">
+    <input type="hidden" name="Category" id="formCategory">
+  </form>
 </main>
 
 <footer>
