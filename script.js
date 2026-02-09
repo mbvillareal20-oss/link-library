@@ -6,8 +6,7 @@ const newName = document.getElementById('newName');
 const newURL = document.getElementById('newURL');
 const newCategory = document.getElementById('newCategory');
 
-// Replace with your Apps Script Web App URL
-const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbxbiKtJ5QK-avmDnkVeoGxukrrldVQUnYS7QxTcO4yTig0eoDtMFmFHuHpx4oJ6ObI/exec"; 
+const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbxbiKtJ5QK-avmDnkVeoGxukrrldVQUnYS7QxTcO4yTig0eoDtMFmFHuHpx4oJ6ObI/exec"; // replace with your Apps Script URL
 
 const categoryColors = {};
 
@@ -18,26 +17,30 @@ function getRandomColor() {
   return color;
 }
 
-// Fetch links from Google Sheet
+// Fetch links
 function fetchLinks() {
   fetch(SHEET_API_URL)
     .then(res => res.json())
     .then(data => {
       linkList.innerHTML = "";
       data.forEach(item => {
-        const categoryKey = item.Category.toLowerCase();
-        if (!categoryColors[categoryKey]) categoryColors[categoryKey] = getRandomColor();
-
-        const li = document.createElement("li");
-        li.dataset.category = categoryKey;
-        li.innerHTML = `
-          <a href="${item.URL}" target="_blank">${item.Name}</a>
-          <span class="category" style="background:${categoryColors[categoryKey]}">${item.Category}</span>
-        `;
-        linkList.appendChild(li);
+        addLinkCard(item.Name, item.URL, item.Category);
       });
     })
     .catch(err => console.error("Error fetching links:", err));
+}
+
+function addLinkCard(Name, URL, Category) {
+  const categoryKey = Category.toLowerCase();
+  if (!categoryColors[categoryKey]) categoryColors[categoryKey] = getRandomColor();
+
+  const card = document.createElement("div");
+  card.classList.add("link-card");
+  card.innerHTML = `
+    <a href="${URL}" target="_blank">${Name}</a>
+    <span class="category" style="background:${categoryColors[categoryKey]}">${Category}</span>
+  `;
+  linkList.appendChild(card);
 }
 
 fetchLinks();
@@ -45,9 +48,9 @@ fetchLinks();
 // Search filter
 searchInput.addEventListener('input', function() {
   const filter = this.value.toLowerCase();
-  Array.from(linkList.getElementsByTagName('li')).forEach(li => {
-    const text = li.querySelector('a').textContent.toLowerCase();
-    li.style.display = text.includes(filter) ? '' : 'none';
+  Array.from(linkList.getElementsByClassName('link-card')).forEach(card => {
+    const text = card.querySelector('a').textContent.toLowerCase();
+    card.style.display = text.includes(filter) ? '' : 'none';
   });
 });
 
@@ -76,22 +79,11 @@ submitButton.addEventListener('click', () => {
       formMessage.textContent = "Link added successfully!";
       formMessage.style.color = "green";
 
-      // Clear form
       newName.value = "";
       newURL.value = "";
       newCategory.value = "";
 
-      // Add link immediately to DOM
-      const categoryKey = Category.toLowerCase();
-      if (!categoryColors[categoryKey]) categoryColors[categoryKey] = getRandomColor();
-
-      const li = document.createElement("li");
-      li.dataset.category = categoryKey;
-      li.innerHTML = `
-        <a href="${URL}" target="_blank">${Name}</a>
-        <span class="category" style="background:${categoryColors[categoryKey]}">${Category}</span>
-      `;
-      linkList.appendChild(li);
+      addLinkCard(Name, URL, Category);
     } else {
       formMessage.textContent = "Failed to add link!";
       formMessage.style.color = "red";
