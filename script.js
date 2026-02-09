@@ -8,18 +8,18 @@ const newCategory = document.getElementById('newCategory');
 
 const categoryColors = {};
 
-// Replace with your deployed Apps Script Web App URL
+// Replace with your Apps Script Web App URL
 const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbypGNjElBRpIoWiTyMuuv4shp8FV3hH0pTNx9eoyMepMj36D6Qk7Oo3plEMgCINW_0q/exec";
 
-// Random color generator for categories
-function getRandomColor(){
+// Random color for categories
+function getRandomColor() {
   const letters = "0123456789ABCDEF";
   let color = "#";
   for(let i=0;i<6;i++) color += letters[Math.floor(Math.random()*16)];
   return color;
 }
 
-// Add a card to the page
+// Add card to page
 function addLinkCard(Name, URL, Category){
   const key = Category.toLowerCase();
   if(!categoryColors[key]) categoryColors[key] = getRandomColor();
@@ -31,7 +31,7 @@ function addLinkCard(Name, URL, Category){
   linkList.appendChild(card);
 }
 
-// Fetch existing links from Google Sheets
+// Fetch links from Google Sheet
 function fetchLinks(){
   fetch(SHEET_API_URL)
     .then(res => res.json())
@@ -45,7 +45,7 @@ function fetchLinks(){
 // Initial fetch
 fetchLinks();
 
-// Filter/search links
+// Search/filter
 searchInput.addEventListener("input", function(){
   const filter = this.value.toLowerCase();
   Array.from(linkList.getElementsByClassName("link-card")).forEach(card => {
@@ -54,7 +54,7 @@ searchInput.addEventListener("input", function(){
   });
 });
 
-// Add new link to Google Sheet
+// Add new link
 submitButton.addEventListener("click", () => {
   const Name = newName.value.trim();
   const URL = newURL.value.trim();
@@ -87,10 +87,10 @@ submitButton.addEventListener("click", () => {
         newURL.value = "";
         newCategory.value = "";
 
-        // Auto-refresh the link list
+        // Refresh list automatically
         fetchLinks();
       } else {
-        formMessage.textContent = "❌ Failed to add link: " + data.message;
+        formMessage.textContent = "❌ Failed: " + data.message;
         formMessage.style.color = "red";
       }
     })
