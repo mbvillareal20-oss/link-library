@@ -6,12 +6,12 @@ const newName = document.getElementById('newName');
 const newURL = document.getElementById('newURL');
 const newCategory = document.getElementById('newCategory');
 
-// Replace with your deployed Apps Script URL
+// Your deployed Apps Script Web App URL
 const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbypGNjElBRpIoWiTyMuuv4shp8FV3hH0pTNx9eoyMepMj36D6Qk7Oo3plEMgCINW_0q/exec";
 
 const categoryColors = {};
 
-// Random color generator for categories
+// Generate a random color for each category
 function getRandomColor() {
   const letters = "0123456789ABCDEF";
   let color = "#";
@@ -26,7 +26,7 @@ function fetchLinks() {
   fetch(SHEET_API_URL)
     .then(res => res.json())
     .then(data => {
-      linkList.innerHTML = ""; // clear existing
+      linkList.innerHTML = "";
       data.forEach(item => {
         addLinkCard(item.Name, item.URL, item.Category);
       });
@@ -74,7 +74,7 @@ submitButton.addEventListener("click", () => {
     return;
   }
 
-  // Send URL-encoded POST to Apps Script
+  // Send as URL-encoded form data to Apps Script
   const params = new URLSearchParams();
   params.append("Name", Name);
   params.append("URL", URL);
@@ -84,8 +84,18 @@ submitButton.addEventListener("click", () => {
     method: "POST",
     body: params
   })
-    .then(res => res.json())
-    .then(data => {
+    .then(res => res.text()) // first get as text
+    .then(text => {
+      let data;
+      try {
+        data = JSON.parse(text); // safely parse JSON
+      } catch (err) {
+        console.error("Failed to parse JSON:", text);
+        formMessage.textContent = "❌ Error adding link (invalid response)";
+        formMessage.style.color = "red";
+        return;
+      }
+
       if (data.status === "success") {
         formMessage.textContent = "✅ Link added successfully!";
         formMessage.style.color = "green";
