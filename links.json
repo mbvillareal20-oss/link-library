@@ -1,5 +1,12 @@
 [
-  { "name": "Google Docs", "url": "https://docs.google.com", "category": "Work" },
-  { "name": "ChatGPT", "url": "https://chat.openai.com", "category": "Tools" },
-  { "name": "GitHub", "url": "https://github.com", "category": "Dev" }
+  {
+    "Name": "Library",
+    "URL": "https://docs.google.com/spreadsheets/d/1yTTSZcDCbUClvZYMDc9vTTgic-1wALd0qWcNJwuv50k/edit?gid=0",
+    "Category": "Google Sheets"
+  },
+  {
+    "Name": "ChatGPT",
+    "URL": "https://chat.openai.com",
+    "Category": "Tools"
+  }
 ]
