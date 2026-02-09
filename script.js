@@ -11,7 +11,7 @@ const categoryColors = {};
 // Replace with your Apps Script Web App URL
 const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbypGNjElBRpIoWiTyMuuv4shp8FV3hH0pTNx9eoyMepMj36D6Qk7Oo3plEMgCINW_0q/exec";
 
-// Random color for categories
+// Random color generator
 function getRandomColor() {
   const letters = "0123456789ABCDEF";
   let color = "#";
@@ -66,15 +66,10 @@ submitButton.addEventListener("click", () => {
     return;
   }
 
-  const params = new URLSearchParams();
-  params.append("Name", Name);
-  params.append("URL", URL);
-  params.append("Category", Category);
-
   fetch(SHEET_API_URL, {
     method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: params.toString()
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ Name, URL, Category })
   })
     .then(res => res.json())
     .then(data => {
@@ -87,7 +82,7 @@ submitButton.addEventListener("click", () => {
         newURL.value = "";
         newCategory.value = "";
 
-        // Refresh list automatically
+        // Refresh link list
         fetchLinks();
       } else {
         formMessage.textContent = "❌ Failed: " + data.message;
