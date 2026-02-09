@@ -4,33 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dynamic Link Library</title>
-<style>
-* { box-sizing: border-box; margin:0; padding:0; font-family:'Segoe UI',sans-serif; }
-body {background:#f5f7fa; color:#333; min-height:100vh; display:flex; flex-direction:column;}
-header {background:#4f46e5; color:white; padding:2rem 1rem; text-align:center;}
-header h1 {font-size:2rem; margin-bottom:1rem;}
-#search {padding:0.5rem 1rem; border-radius:25px; border:none; width:100%; max-width:400px;}
-
-main {flex:1; padding:2rem 1rem; display:flex; flex-direction:column; align-items:center;}
-#linkList {list-style:none; display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:1.5rem; width:100%; max-width:1000px; margin-bottom:2rem;}
-.link-card {background:white; padding:1.5rem; border-radius:12px; box-shadow:0 5px 15px rgba(0,0,0,0.1); transition: transform 0.2s, box-shadow 0.2s;}
-.link-card:hover {transform:translateY(-5px); box-shadow:0 10px 20px rgba(0,0,0,0.15);}
-.link-card a {display:block; font-weight:600; font-size:1.1rem; margin-bottom:0.5rem; color:#4f46e5; text-decoration:none;}
-.link-card a:hover {text-decoration:underline;}
-.category {font-size:0.85rem; color:white; padding:2px 8px; border-radius:12px; font-weight:bold;}
-
-.form-container {background:white; padding:1.5rem; border-radius:12px; box-shadow:0 5px 15px rgba(0,0,0,0.1); max-width:500px; width:100%; text-align:center; margin-bottom:2rem;}
-.form-container h2 {margin-bottom:1rem; color:#4f46e5;}
-.form-container input {width:100%; padding:0.6rem 1rem; margin:0.5rem 0; border-radius:8px; border:1px solid #ccc; font-size:1rem;}
-.form-container button {padding:0.6rem 1.5rem; margin-top:0.5rem; border:none; border-radius:25px; background:#4f46e5; color:white; font-weight:bold; cursor:pointer; transition: background 0.2s;}
-.form-container button:hover {background:#3730a3;}
-#formMessage {margin-top:0.5rem; font-weight:bold;}
-
-footer {text-align:center; padding:1rem; background:#f5f7fa; color:#666; font-size:0.9rem;}
-@media (max-width:500px){header h1{font-size:1.5rem;}}
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
+
 <header>
   <h1>🔗 Dynamic Link Library</h1>
   <input type="text" id="search" placeholder="Search links...">
@@ -47,99 +24,14 @@ footer {text-align:center; padding:1rem; background:#f5f7fa; color:#666; font-si
     <button id="submitLink">Add Link</button>
     <p id="formMessage"></p>
   </div>
-
-  <!-- Hidden form for Apps Script POST -->
-  <iframe name="hiddenFrame" style="display:none;"></iframe>
-  <form id="hiddenForm" action="https://script.google.com/macros/s/AKfycbypGNjElBRpIoWiTyMuuv4shp8FV3hH0pTNx9eoyMepMj36D6Qk7Oo3plEMgCINW_0q/exec" method="POST" target="hiddenFrame" style="display:none;">
-    <input type="hidden" name="Name" id="formName">
-    <input type="hidden" name="URL" id="formURL">
-    <input type="hidden" name="Category" id="formCategory">
-  </form>
 </main>
 
 <footer>
   <p>© 2026 Your Name</p>
 </footer>
 
-<script>
-const searchInput = document.getElementById('search');
-const linkList = document.getElementById('linkList');
-const submitButton = document.getElementById('submitLink');
-const formMessage = document.getElementById('formMessage');
-const newName = document.getElementById('newName');
-const newURL = document.getElementById('newURL');
-const newCategory = document.getElementById('newCategory');
+<!-- Link to external script -->
+<script src="script.js"></script>
 
-const formName = document.getElementById('formName');
-const formURL = document.getElementById('formURL');
-const formCategory = document.getElementById('formCategory');
-const hiddenForm = document.getElementById('hiddenForm');
-
-const categoryColors = {};
-
-function getRandomColor(){
-  const letters = "0123456789ABCDEF";
-  let color = "#";
-  for(let i=0;i<6;i++) color += letters[Math.floor(Math.random()*16)];
-  return color;
-}
-
-function addLinkCard(Name, URL, Category){
-  const key = Category.toLowerCase();
-  if(!categoryColors[key]) categoryColors[key] = getRandomColor();
-
-  const card = document.createElement("div");
-  card.classList.add("link-card");
-  card.innerHTML = `<a href="${URL}" target="_blank">${Name}</a>
-                    <span class="category" style="background:${categoryColors[key]}">${Category}</span>`;
-  linkList.appendChild(card);
-}
-
-// Fetch existing links
-function fetchLinks(){
-  fetch("https://script.google.com/macros/s/AKfycbypGNjElBRpIoWiTyMuuv4shp8FV3hH0pTNx9eoyMepMj36D6Qk7Oo3plEMgCINW_0q/exec")
-    .then(res=>res.json())
-    .then(data=>{
-      linkList.innerHTML="";
-      data.forEach(item=>addLinkCard(item.Name,item.URL,item.Category));
-    });
-}
-fetchLinks();
-
-// Search filter
-searchInput.addEventListener("input",function(){
-  const filter = this.value.toLowerCase();
-  Array.from(linkList.getElementsByClassName("link-card")).forEach(card=>{
-    const text = card.querySelector("a").textContent.toLowerCase();
-    card.style.display = text.includes(filter) ? "" : "none";
-  });
-});
-
-// Add link via hidden form
-submitButton.addEventListener("click",()=>{
-  const Name = newName.value.trim();
-  const URL = newURL.value.trim();
-  const Category = newCategory.value.trim();
-
-  if(!Name || !URL || !Category){
-    formMessage.textContent = "⚠️ All fields are required!";
-    formMessage.style.color="red";
-    return;
-  }
-
-  formName.value = Name;
-  formURL.value = URL;
-  formCategory.value = Category;
-
-  hiddenForm.submit(); // submit without CORS issues
-
-  formMessage.textContent = "✅ Link sent! Refresh to see it.";
-  formMessage.style.color="green";
-
-  // Optional: update page immediately
-  addLinkCard(Name, URL, Category);
-  newName.value=""; newURL.value=""; newCategory.value="";
-});
-</script>
 </body>
 </html>
