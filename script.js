@@ -11,11 +11,11 @@ const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbypGNjElBRpIoWiTy
 
 const categoryColors = {};
 
-// Random color generator
+// Random color for categories
 function getRandomColor() {
   const letters = "0123456789ABCDEF";
   let color = "#";
-  for (let i = 0; i < 6; i++) color += letters[Math.floor(Math.random() * 16)];
+  for(let i=0;i<6;i++) color += letters[Math.floor(Math.random()*16)];
   return color;
 }
 
@@ -47,7 +47,7 @@ function fetchLinks(){
 // Initial fetch
 fetchLinks();
 
-// Search/filter
+// Search/filter links
 searchInput.addEventListener("input", function(){
   const filter = this.value.toLowerCase();
   Array.from(linkList.getElementsByClassName("link-card")).forEach(card => {
@@ -73,8 +73,11 @@ submitButton.addEventListener("click", ()=>{
   params.append("URL", URL);
   params.append("Category", Category);
 
-  fetch(SHEET_API_URL, {method:"POST", body:params})
-    .then(res => res.json())
+  fetch(SHEET_API_URL, {
+    method:"POST",
+    body: params
+  })
+    .then(res => res.json()) // Apps Script now returns proper JSON
     .then(data=>{
       if(data.status==="success"){
         formMessage.textContent = "✅ Link added successfully!";
@@ -82,7 +85,7 @@ submitButton.addEventListener("click", ()=>{
         addLinkCard(Name, URL, Category);
         newName.value=""; newURL.value=""; newCategory.value="";
       } else {
-        formMessage.textContent = "❌ Failed to add link: "+data.message;
+        formMessage.textContent = "❌ Failed to add link: " + data.message;
         formMessage.style.color = "red";
       }
     })
