@@ -9,10 +9,15 @@ submitButton.addEventListener("click", () => {
     return;
   }
 
+  // Use URLSearchParams to send form data
+  const params = new URLSearchParams();
+  params.append("Name", Name);
+  params.append("URL", URL);
+  params.append("Category", Category);
+
   fetch(SHEET_API_URL, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ Name, URL, Category })
+    body: params
   })
   .then(res => res.json())
   .then(data => {
