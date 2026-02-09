@@ -6,23 +6,26 @@ const newName = document.getElementById('newName');
 const newURL = document.getElementById('newURL');
 const newCategory = document.getElementById('newCategory');
 
-const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbxbiKtJ5QK-avmDnkVeoGxukrrldVQUnYS7QxTcO4yTig0eoDtMFmFHuHpx4oJ6ObI/exec"; // replace with your Apps Script URL
+// ← Replace with your actual deployed Apps Script Web App URL
+const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbypGNjElBRpIoWiTyMuuv4shp8FV3hH0pTNx9eoyMepMj36D6Qk7Oo3plEMgCINW_0q/exec";
 
 const categoryColors = {};
 
 function getRandomColor() {
   const letters = "0123456789ABCDEF";
   let color = "#";
-  for(let i=0;i<6;i++) color += letters[Math.floor(Math.random()*16)];
+  for(let i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
   return color;
 }
 
-// Fetch links
+// Fetch links from Google Sheet
 function fetchLinks() {
   fetch(SHEET_API_URL)
     .then(res => res.json())
     .then(data => {
-      linkList.innerHTML = "";
+      linkList.innerHTML = ""; // clear existing
       data.forEach(item => {
         addLinkCard(item.Name, item.URL, item.Category);
       });
@@ -30,9 +33,12 @@ function fetchLinks() {
     .catch(err => console.error("Error fetching links:", err));
 }
 
+// Create a link card
 function addLinkCard(Name, URL, Category) {
   const categoryKey = Category.toLowerCase();
-  if (!categoryColors[categoryKey]) categoryColors[categoryKey] = getRandomColor();
+  if (!categoryColors[categoryKey]) {
+    categoryColors[categoryKey] = getRandomColor();
+  }
 
   const card = document.createElement("div");
   card.classList.add("link-card");
@@ -45,23 +51,23 @@ function addLinkCard(Name, URL, Category) {
 
 fetchLinks();
 
-// Search filter
-searchInput.addEventListener('input', function() {
+// Search/filter logic
+searchInput.addEventListener("input", function() {
   const filter = this.value.toLowerCase();
-  Array.from(linkList.getElementsByClassName('link-card')).forEach(card => {
-    const text = card.querySelector('a').textContent.toLowerCase();
-    card.style.display = text.includes(filter) ? '' : 'none';
+  Array.from(linkList.getElementsByClassName("link-card")).forEach(card => {
+    const text = card.querySelector("a").textContent.toLowerCase();
+    card.style.display = text.includes(filter) ? "" : "none";
   });
 });
 
-// Add link form
-submitButton.addEventListener('click', () => {
+// Add new link
+submitButton.addEventListener("click", () => {
   const Name = newName.value.trim();
   const URL = newURL.value.trim();
   const Category = newCategory.value.trim();
 
   if (!Name || !URL || !Category) {
-    formMessage.textContent = "All fields are required!";
+    formMessage.textContent = "⚠️ All fields are required!";
     formMessage.style.color = "red";
     return;
   }
@@ -76,22 +82,25 @@ submitButton.addEventListener('click', () => {
   .then(res => res.json())
   .then(data => {
     if (data.status === "success") {
-      formMessage.textContent = "Link added successfully!";
+      formMessage.textContent = "✅ Link added successfully!";
       formMessage.style.color = "green";
 
+      // clear form
       newName.value = "";
       newURL.value = "";
       newCategory.value = "";
 
+      // add card right away
       addLinkCard(Name, URL, Category);
     } else {
-      formMessage.textContent = "Failed to add link!";
+      formMessage.textContent = "❌ Failed to add link!";
       formMessage.style.color = "red";
+      console.error(data);
     }
   })
   .catch(err => {
     console.error(err);
-    formMessage.textContent = "Error adding link!";
+    formMessage.textContent = "⚠️ Error adding link!";
     formMessage.style.color = "red";
   });
 });
