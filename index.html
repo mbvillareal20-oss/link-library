@@ -1,12 +1,25 @@
-<h1>🔗 My Link Library</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Link Library</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>🔗 My Link Library</h1>
+    <input type="text" id="search" placeholder="Search links...">
+  </header>
 
-<form id="addLinkForm">
-  <input type="text" id="linkName" placeholder="Link Name" required>
-  <input type="url" id="linkURL" placeholder="Link URL" required>
-  <input type="text" id="linkCategory" placeholder="Category" required>
-  <button type="submit">Add Link</button>
-</form>
+  <main>
+    <ul id="linkList"></ul>
+  </main>
 
-<input type="text" id="search" placeholder="Search links...">
+  <footer>
+    <p>© 2026 Mark Bryan Villareal</p>
+  </footer>
 
-<ul id="linkList"></ul>
+  <script src="script.js"></script>
+</body>
+</html>

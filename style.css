@@ -81,11 +81,16 @@ main {
 
 .category {
   font-size: 0.85rem;
-  color: #888;
-  background: #e0e7ff;
+  color: white;
   padding: 2px 8px;
   border-radius: 12px;
+  font-weight: bold;
 }
+
+/* Category colors */
+[data-category="work"] .category { background: #10b981; }
+[data-category="tools"] .category { background: #f59e0b; }
+[data-category="dev"]   .category { background: #ef4444; }
 
 /* Footer */
 footer {
