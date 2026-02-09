@@ -3,32 +3,30 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Link Library</title>
+  <title>Dynamic Link Library</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <header>
-    <h1>🔗 My Link Library</h1>
+    <h1>🔗 Dynamic Link Library</h1>
     <input type="text" id="search" placeholder="Search links...">
   </header>
 
   <main>
-    <!-- Links List -->
     <ul id="linkList"></ul>
 
-    <!-- Add New Link Form -->
-    <div id="addLinkForm" class="form-container">
+    <div class="form-container">
       <h2>Add a New Link</h2>
-      <input type="text" id="newName" placeholder="Name" required>
-      <input type="url" id="newURL" placeholder="URL" required>
-      <input type="text" id="newCategory" placeholder="Category" required>
+      <input type="text" id="newName" placeholder="Name">
+      <input type="url" id="newURL" placeholder="URL">
+      <input type="text" id="newCategory" placeholder="Category">
       <button id="submitLink">Add Link</button>
       <p id="formMessage"></p>
     </div>
   </main>
 
   <footer>
-    <p>© 2026 Mark Bryan Villareal</p>
+    <p>© 2026 Your Name</p>
   </footer>
 
   <script src="script.js"></script>
