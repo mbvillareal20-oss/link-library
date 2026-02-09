@@ -6,9 +6,10 @@ const newName = document.getElementById('newName');
 const newURL = document.getElementById('newURL');
 const newCategory = document.getElementById('newCategory');
 
-const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbz17JF_tQaD7GK8hSkZY7qiQXye2etSmDdRh0bKgLcICnrboYvwFGGggdtkjehsbvta/exechttps://script.google.com/macros/s/AKfycbyUjDhZQg-x5hlzk-8PTp-MuHFDQSIV41vi91OrAIGSnAuHorX_c3X2xcjfkCa9CfgE/exec"; // replace with your Apps Script URL
+// Replace with your Apps Script Web App URL
+const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbxbiKtJ5QK-avmDnkVeoGxukrrldVQUnYS7QxTcO4yTig0eoDtMFmFHuHpx4oJ6ObI/exec"; 
 
-const categoryColors = {}; // store dynamic colors
+const categoryColors = {};
 
 function getRandomColor() {
   const letters = "0123456789ABCDEF";
@@ -17,23 +18,21 @@ function getRandomColor() {
   return color;
 }
 
+// Fetch links from Google Sheet
 function fetchLinks() {
   fetch(SHEET_API_URL)
     .then(res => res.json())
     .then(data => {
       linkList.innerHTML = "";
-
       data.forEach(item => {
-        // assign dynamic color if not exists
-        if (!categoryColors[item.Category.toLowerCase()]) {
-          categoryColors[item.Category.toLowerCase()] = getRandomColor();
-        }
+        const categoryKey = item.Category.toLowerCase();
+        if (!categoryColors[categoryKey]) categoryColors[categoryKey] = getRandomColor();
 
         const li = document.createElement("li");
-        li.dataset.category = item.Category.toLowerCase();
+        li.dataset.category = categoryKey;
         li.innerHTML = `
           <a href="${item.URL}" target="_blank">${item.Name}</a>
-          <span class="category" style="background:${categoryColors[item.Category.toLowerCase()]}">${item.Category}</span>
+          <span class="category" style="background:${categoryColors[categoryKey]}">${item.Category}</span>
         `;
         linkList.appendChild(li);
       });
@@ -43,6 +42,7 @@ function fetchLinks() {
 
 fetchLinks();
 
+// Search filter
 searchInput.addEventListener('input', function() {
   const filter = this.value.toLowerCase();
   Array.from(linkList.getElementsByTagName('li')).forEach(li => {
@@ -51,6 +51,7 @@ searchInput.addEventListener('input', function() {
   });
 });
 
+// Add link form
 submitButton.addEventListener('click', () => {
   const Name = newName.value.trim();
   const URL = newURL.value.trim();
@@ -62,27 +63,43 @@ submitButton.addEventListener('click', () => {
     return;
   }
 
+  const newLink = { Name, URL, Category };
+
   fetch(SHEET_API_URL, {
     method: "POST",
-    body: JSON.stringify({ Name, URL, Category })
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(newLink)
   })
-    .then(res => res.json())
-    .then(data => {
-      if (data.status === "success") {
-        formMessage.textContent = "Link added successfully!";
-        formMessage.style.color = "green";
-        newName.value = "";
-        newURL.value = "";
-        newCategory.value = "";
-        fetchLinks();
-      } else {
-        formMessage.textContent = "Failed to add link!";
-        formMessage.style.color = "red";
-      }
-    })
-    .catch(err => {
-      console.error(err);
-      formMessage.textContent = "Error adding link!";
+  .then(res => res.json())
+  .then(data => {
+    if (data.status === "success") {
+      formMessage.textContent = "Link added successfully!";
+      formMessage.style.color = "green";
+
+      // Clear form
+      newName.value = "";
+      newURL.value = "";
+      newCategory.value = "";
+
+      // Add link immediately to DOM
+      const categoryKey = Category.toLowerCase();
+      if (!categoryColors[categoryKey]) categoryColors[categoryKey] = getRandomColor();
+
+      const li = document.createElement("li");
+      li.dataset.category = categoryKey;
+      li.innerHTML = `
+        <a href="${URL}" target="_blank">${Name}</a>
+        <span class="category" style="background:${categoryColors[categoryKey]}">${Category}</span>
+      `;
+      linkList.appendChild(li);
+    } else {
+      formMessage.textContent = "Failed to add link!";
       formMessage.style.color = "red";
-    });
+    }
+  })
+  .catch(err => {
+    console.error(err);
+    formMessage.textContent = "Error adding link!";
+    formMessage.style.color = "red";
+  });
 });
