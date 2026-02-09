@@ -6,14 +6,13 @@ const newName = document.getElementById('newName');
 const newURL = document.getElementById('newURL');
 const newCategory = document.getElementById('newCategory');
 
-const hiddenForm = document.getElementById('hiddenForm');
 const formName = document.getElementById('formName');
 const formURL = document.getElementById('formURL');
 const formCategory = document.getElementById('formCategory');
+const hiddenForm = document.getElementById('hiddenForm');
 
 const categoryColors = {};
 
-// Random color for categories
 function getRandomColor() {
   const letters = "0123456789ABCDEF";
   let color = "#";
@@ -21,7 +20,7 @@ function getRandomColor() {
   return color;
 }
 
-// Add link card to page
+// Add a card to the page
 function addLinkCard(Name, URL, Category) {
   const key = Category.toLowerCase();
   if (!categoryColors[key]) categoryColors[key] = getRandomColor();
@@ -33,22 +32,22 @@ function addLinkCard(Name, URL, Category) {
   linkList.appendChild(card);
 }
 
-// Fetch links from Google Sheet
+// Fetch links from your Apps Script Web App
 function fetchLinks() {
-  fetch(hiddenForm.action)
+  fetch("https://script.google.com/macros/s/AKfycbypGNjElBRpIoWiTyMuuv4shp8FV3hH0pTNx9eoyMepMj36D6Qk7Oo3plEMgCINW_0q/exec")
     .then(res => res.json())
     .then(data => {
       linkList.innerHTML = "";
       data.forEach(item => addLinkCard(item.Name, item.URL, item.Category));
     })
-    .catch(err => console.error(err));
+    .catch(err => console.error("Error fetching links:", err));
 }
 
 // Initial fetch
 fetchLinks();
 
-// Search/filter
-searchInput.addEventListener("input", function() {
+// Filter links
+searchInput.addEventListener("input", function () {
   const filter = this.value.toLowerCase();
   Array.from(linkList.getElementsByClassName("link-card")).forEach(card => {
     const text = card.querySelector("a").textContent.toLowerCase();
@@ -56,7 +55,7 @@ searchInput.addEventListener("input", function() {
   });
 });
 
-// Add new link
+// Add new link using hidden form
 submitButton.addEventListener("click", () => {
   const Name = newName.value.trim();
   const URL = newURL.value.trim();
@@ -68,19 +67,23 @@ submitButton.addEventListener("click", () => {
     return;
   }
 
+  // Set hidden form values
   formName.value = Name;
   formURL.value = URL;
   formCategory.value = Category;
+
+  // Submit hidden form to Apps Script
   hiddenForm.submit();
 
-  formMessage.textContent = "✅ Link sent! Refreshing...";
+  // Feedback
+  formMessage.textContent = "✅ Link sent! Refresh to see it in the list.";
   formMessage.style.color = "green";
 
+  // Optional: add immediately to page
   addLinkCard(Name, URL, Category);
 
+  // Clear input fields
   newName.value = "";
   newURL.value = "";
   newCategory.value = "";
-
-  setTimeout(fetchLinks, 1000); // refresh links after 1 second
 });
