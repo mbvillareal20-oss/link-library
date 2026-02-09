@@ -13,7 +13,7 @@ const formCategory = document.getElementById('formCategory');
 
 const categoryColors = {};
 
-// Random color generator
+// Random color for categories
 function getRandomColor() {
   const letters = "0123456789ABCDEF";
   let color = "#";
@@ -21,10 +21,10 @@ function getRandomColor() {
   return color;
 }
 
-// Add card to page
-function addLinkCard(Name, URL, Category){
+// Add link card to page
+function addLinkCard(Name, URL, Category) {
   const key = Category.toLowerCase();
-  if(!categoryColors[key]) categoryColors[key] = getRandomColor();
+  if (!categoryColors[key]) categoryColors[key] = getRandomColor();
 
   const card = document.createElement("div");
   card.classList.add("link-card");
@@ -34,21 +34,21 @@ function addLinkCard(Name, URL, Category){
 }
 
 // Fetch links from Google Sheet
-function fetchLinks(){
+function fetchLinks() {
   fetch(hiddenForm.action)
     .then(res => res.json())
     .then(data => {
       linkList.innerHTML = "";
       data.forEach(item => addLinkCard(item.Name, item.URL, item.Category));
     })
-    .catch(err => console.error("Error fetching links:", err));
+    .catch(err => console.error(err));
 }
 
 // Initial fetch
 fetchLinks();
 
-// Search/filter links
-searchInput.addEventListener("input", function(){
+// Search/filter
+searchInput.addEventListener("input", function() {
   const filter = this.value.toLowerCase();
   Array.from(linkList.getElementsByClassName("link-card")).forEach(card => {
     const text = card.querySelector("a").textContent.toLowerCase();
@@ -56,7 +56,7 @@ searchInput.addEventListener("input", function(){
   });
 });
 
-// Add link via hidden form
+// Add new link
 submitButton.addEventListener("click", () => {
   const Name = newName.value.trim();
   const URL = newURL.value.trim();
@@ -68,21 +68,19 @@ submitButton.addEventListener("click", () => {
     return;
   }
 
-  // Fill hidden form and submit
   formName.value = Name;
   formURL.value = URL;
   formCategory.value = Category;
-
   hiddenForm.submit();
 
-  formMessage.textContent = "✅ Link sent!";
+  formMessage.textContent = "✅ Link sent! Refreshing...";
   formMessage.style.color = "green";
 
-  // Clear inputs
+  addLinkCard(Name, URL, Category);
+
   newName.value = "";
   newURL.value = "";
   newCategory.value = "";
 
-  // Wait 1 second and fetch latest links
-  setTimeout(fetchLinks, 1000);
+  setTimeout(fetchLinks, 1000); // refresh links after 1 second
 });
