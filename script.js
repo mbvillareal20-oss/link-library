@@ -6,7 +6,7 @@ const newName = document.getElementById('newName');
 const newURL = document.getElementById('newURL');
 const newCategory = document.getElementById('newCategory');
 
-const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbz17JF_tQaD7GK8hSkZY7qiQXye2etSmDdRh0bKgLcICnrboYvwFGGggdtkjehsbvta/exec"; // replace with your Apps Script URL
+const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbz17JF_tQaD7GK8hSkZY7qiQXye2etSmDdRh0bKgLcICnrboYvwFGGggdtkjehsbvta/exechttps://script.google.com/macros/s/AKfycbyUjDhZQg-x5hlzk-8PTp-MuHFDQSIV41vi91OrAIGSnAuHorX_c3X2xcjfkCa9CfgE/exec"; // replace with your Apps Script URL
 
 const categoryColors = {}; // store dynamic colors
 
