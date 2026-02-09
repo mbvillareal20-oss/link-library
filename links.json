@@ -1,0 +1,5 @@
+[
+  { "name": "Google Docs", "url": "https://docs.google.com", "category": "Work" },
+  { "name": "ChatGPT", "url": "https://chat.openai.com", "category": "Tools" },
+  { "name": "GitHub", "url": "https://github.com", "category": "Dev" }
+]
