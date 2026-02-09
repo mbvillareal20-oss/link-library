@@ -1,58 +1,33 @@
-const searchInput = document.getElementById("search");
-const linkList = document.getElementById("linkList");
-const addLinkForm = document.getElementById("addLinkForm");
-const linkNameInput = document.getElementById("linkName");
-const linkURLInput = document.getElementById("linkURL");
-const linkCategoryInput = document.getElementById("linkCategory");
+const searchInput = document.getElementById('search');
+const linkList = document.getElementById('linkList');
 
-let links = [];
+// Your Google Apps Script Web App URL
+const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbz17JF_tQaD7GK8hSkZY7qiQXye2etSmDdRh0bKgLcICnrboYvwFGGggdtkjehsbvta/exec";
 
-// Load existing links from JSON
-fetch("links.json")
+// Fetch links dynamically
+fetch(SHEET_API_URL)
   .then(res => res.json())
   .then(data => {
-    links = data;
-    displayLinks(links);
+    linkList.innerHTML = ""; // Clear existing content
+
+    data.forEach(item => {
+      const li = document.createElement("li");
+      li.dataset.category = item.Category.toLowerCase();
+      li.innerHTML = `
+        <a href="${item.URL}" target="_blank">${item.Name}</a>
+        <span class="category">${item.Category}</span>
+      `;
+      linkList.appendChild(li);
+    });
   })
-  .catch(err => console.error("Error loading links.json:", err));
+  .catch(err => console.error("Error fetching links:", err));
 
-// Display links function
-function displayLinks(linkArray) {
-  linkList.innerHTML = "";
-  linkArray.forEach(link => {
-    const li = document.createElement("li");
-    li.dataset.category = link.category.toLowerCase();
-    li.innerHTML = `<a href="${link.url}" target="_blank">${link.name}</a>
-                    <span>${link.category}</span>`;
-    linkList.appendChild(li);
+// Search functionality
+searchInput.addEventListener('input', function() {
+  const filter = this.value.toLowerCase();
+  const links = linkList.getElementsByTagName('li');
+  Array.from(links).forEach(li => {
+    const text = li.querySelector('a').textContent.toLowerCase();
+    li.style.display = text.includes(filter) ? '' : 'none';
   });
-}
-
-// Filter/search
-searchInput.addEventListener("keyup", () => {
-  const value = searchInput.value.toLowerCase();
-  const filtered = links.filter(link =>
-    link.name.toLowerCase().includes(value) ||
-    link.category.toLowerCase().includes(value)
-  );
-  displayLinks(filtered);
-});
-
-// Add new link dynamically
-addLinkForm.addEventListener("submit", (e) => {
-  e.preventDefault();
-
-  const newLink = {
-    name: linkNameInput.value,
-    url: linkURLInput.value,
-    category: linkCategoryInput.value
-  };
-
-  links.push(newLink);
-  displayLinks(links);
-
-  // Clear form
-  linkNameInput.value = "";
-  linkURLInput.value = "";
-  linkCategoryInput.value = "";
 });
